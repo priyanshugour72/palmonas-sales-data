@@ -1,7 +1,7 @@
 "use client";
 
 import { Select, Tag } from "antd";
-import { useSalesContext } from "@/context/SalesContext";
+import { useSalesContext } from "@/hooks/sales/useSalesContext";
 
 export function FiltersBar() {
   const {

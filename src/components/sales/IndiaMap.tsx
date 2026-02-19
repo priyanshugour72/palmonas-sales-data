@@ -8,7 +8,7 @@ import {
   ZoomableGroup,
 } from "react-simple-maps";
 import type { AggregatedByState } from "@/types/sales";
-import { normalizeStateForMap } from "@/services/analyticsService";
+import { normalizeStateForMap } from "@/services/sales/analyticsService";
 
 const MAP_URL = "/india-states.json";
 

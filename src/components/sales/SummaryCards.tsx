@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { useSalesContext } from "@/context/SalesContext";
+import { useSalesContext } from "@/hooks/sales/useSalesContext";
 
 function formatCr(n: number): string {
   return `₹${(n / 1e7).toFixed(2)} Cr`;

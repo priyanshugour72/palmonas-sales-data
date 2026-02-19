@@ -8,20 +8,20 @@ import React, {
   useState,
 } from "react";
 import type { SalesRow, ChartFilterState } from "@/types/sales";
-import type { StoredMeta } from "@/lib/storage";
+import type { StoredMeta } from "@/lib/sales/storage";
 import {
   loadSalesData,
   loadSalesMeta,
   saveSalesData,
   clearSalesData as clearStorage,
-} from "@/lib/storage";
+} from "@/lib/sales/storage";
 import {
   aggregateByState,
   aggregateByZone,
   aggregateByTier,
   filterRows,
   getUniqueValues,
-} from "@/services/analyticsService";
+} from "@/services/sales/analyticsService";
 
 export interface SalesContextValue {
   rows: SalesRow[];

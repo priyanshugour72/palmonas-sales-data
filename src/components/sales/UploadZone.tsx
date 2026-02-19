@@ -2,8 +2,8 @@
 
 import { InboxOutlined } from "@ant-design/icons";
 import { Upload } from "antd";
-import { useSalesContext } from "@/context/SalesContext";
-import { parseExcelFile } from "@/lib/excelParser";
+import { useSalesContext } from "@/hooks/sales/useSalesContext";
+import { parseExcelFile } from "@/lib/sales/excelParser";
 
 const { Dragger } = Upload;
 
