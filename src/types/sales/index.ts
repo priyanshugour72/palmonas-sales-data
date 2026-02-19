@@ -70,6 +70,21 @@ export interface AggregatedByTier {
   orderCount: number;
 }
 
+export interface AggregatedByDistrict {
+  district: string;
+  state: string;
+  totalSales: number;
+  netSales: number;
+  orderCount: number;
+}
+
+export interface AggregatedByMetro {
+  metro: string;
+  totalSales: number;
+  netSales: number;
+  orderCount: number;
+}
+
 export interface ChartFilterState {
   states: string[];
   zones: string[];

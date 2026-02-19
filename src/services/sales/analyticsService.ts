@@ -3,6 +3,8 @@ import type {
   AggregatedByState,
   AggregatedByZone,
   AggregatedByTier,
+  AggregatedByDistrict,
+  AggregatedByMetro,
   ChartFilterState,
 } from "@/types/sales";
 
@@ -125,6 +127,69 @@ export function aggregateByTier(
     } else {
       map.set(tier, {
         tier,
+        totalSales: total,
+        netSales: net,
+        orderCount: 1,
+      });
+    }
+  }
+
+  return Array.from(map.values()).sort((a, b) => b.totalSales - a.totalSales);
+}
+
+export function aggregateByDistrict(
+  rows: SalesRow[],
+  filter?: ChartFilterState
+): AggregatedByDistrict[] {
+  const filtered = filterRows(rows, filter);
+  const map = new Map<string, AggregatedByDistrict>();
+
+  for (const row of filtered) {
+    const district = String(row.District ?? "Unknown").trim();
+    const state = getStateName(row);
+    const key = `${state}|${district}`;
+    const existing = map.get(key);
+    const total = num(row["Total sales"]);
+    const net = num(row["Net sales"]);
+
+    if (existing) {
+      existing.totalSales += total;
+      existing.netSales += net;
+      existing.orderCount += 1;
+    } else {
+      map.set(key, {
+        district,
+        state,
+        totalSales: total,
+        netSales: net,
+        orderCount: 1,
+      });
+    }
+  }
+
+  return Array.from(map.values()).sort((a, b) => b.totalSales - a.totalSales);
+}
+
+export function aggregateByMetro(
+  rows: SalesRow[],
+  filter?: ChartFilterState
+): AggregatedByMetro[] {
+  const filtered = filterRows(rows, filter);
+  const map = new Map<string, AggregatedByMetro>();
+
+  for (const row of filtered) {
+    const metro = String(row["Metro/Non-metro"] ?? "Unknown").trim();
+    const existing = map.get(metro);
+    const total = num(row["Total sales"]);
+    const net = num(row["Net sales"]);
+
+    if (existing) {
+      existing.totalSales += total;
+      existing.netSales += net;
+      existing.orderCount += 1;
+    } else {
+      map.set(metro, {
+        metro,
         totalSales: total,
         netSales: net,
         orderCount: 1,

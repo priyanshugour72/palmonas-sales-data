@@ -1,32 +1,71 @@
 "use client";
 
-import { useState } from "react";
 import { signOut } from "next-auth/react";
 import {
   UploadZone,
   FiltersBar,
   SummaryCards,
-  ChartSelector,
   DataTable,
   IndiaMap,
   StateBarChart,
   ZonePieChart,
   TierBarChart,
   LineChartByState,
-  type ChartType,
+  StateDonutChart,
+  ZoneDonutChart,
+  MetroPieChart,
+  DistrictBarChart,
+  StackedBarChart,
+  AreaChartByZone,
+  TreemapChart,
+  ComboChart,
+  RadarChartZones,
+  DiscountsReturnsBarChart,
+  StateSummaryTable,
+  ZoneSummaryTable,
+  TierSummaryTable,
+  DistrictSummaryTable,
 } from "@/components/sales";
 import { SalesProvider, useSalesContext } from "@/context/sales/SalesContext";
 import { Tabs } from "antd";
 
+function ChartCard({
+  title,
+  children,
+  className = "",
+}: {
+  title: string;
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <div
+      className={`rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900 ${className}`}
+    >
+      <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-600 dark:text-slate-300">
+        {title}
+      </h3>
+      {children}
+    </div>
+  );
+}
+
 function SalesDashboardContent() {
-  const { rows, filteredRows, byState, byZone, byTier } = useSalesContext();
-  const [chartType, setChartType] = useState<ChartType>("state-bar");
+  const {
+    rows,
+    filteredRows,
+    byState,
+    byZone,
+    byTier,
+    byDistrict,
+    byMetro,
+  } = useSalesContext();
 
   const hasData = rows.length > 0;
 
   return (
     <div className="min-h-screen bg-slate-100 dark:bg-zinc-950">
-      <div className="mx-auto max-w-[1600px] space-y-6 p-4 sm:p-6">
+      <div className="mx-auto max-w-[1800px] space-y-6 p-4 sm:p-6">
         <header className="relative text-center">
           <div className="absolute right-0 top-0 flex items-center gap-3">
             <button
@@ -41,7 +80,7 @@ function SalesDashboardContent() {
             Sales Analytics
           </h1>
           <p className="mt-1 text-slate-600 dark:text-slate-400">
-            Upload your Excel and explore state-wise charts, maps and filters
+            Upload Excel · State, Zone, Tier, District & Metro views · Maps, charts & tables
           </p>
         </header>
 
@@ -65,46 +104,139 @@ function SalesDashboardContent() {
             <SummaryCards />
 
             <Tabs
-              defaultActiveKey="charts"
+              defaultActiveKey="overview"
+              size="middle"
               items={[
                 {
-                  key: "charts",
-                  label: "Charts & Map",
+                  key: "overview",
+                  label: "Map & Overview",
                   children: (
                     <div className="space-y-6">
-                      <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900">
-                        <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
-                          <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-100">
-                            Analytics
-                          </h2>
-                          <ChartSelector value={chartType} onChange={setChartType} />
-                        </div>
-                        <div className="min-h-[320px]">
-                          {chartType === "state-bar" && (
-                            <StateBarChart data={byState} limit={15} />
-                          )}
-                          {chartType === "zone-pie" && <ZonePieChart data={byZone} />}
-                          {chartType === "tier-bar" && <TierBarChart data={byTier} />}
-                          {chartType === "state-line" && (
-                            <LineChartByState data={byState} limit={12} />
-                          )}
-                        </div>
+                      <ChartCard title="India — State-wise sales (%)">
+                        <IndiaMap byState={byState} />
+                      </ChartCard>
+                      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                        <ChartCard title="State bar (top 15)">
+                          <StateBarChart data={byState} limit={15} />
+                        </ChartCard>
+                        <ChartCard title="Zone pie">
+                          <ZonePieChart data={byZone} />
+                        </ChartCard>
+                        <ChartCard title="Tier bar">
+                          <TierBarChart data={byTier} />
+                        </ChartCard>
                       </div>
-
-                      <IndiaMap byState={byState} />
                     </div>
                   ),
                 },
                 {
-                  key: "table",
-                  label: "Data Table",
+                  key: "pie-donut",
+                  label: "Pie & Donut",
+                  children: (
+                    <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+                      <ChartCard title="State donut (top 8)">
+                        <StateDonutChart data={byState} limit={8} />
+                      </ChartCard>
+                      <ChartCard title="Zone donut">
+                        <ZoneDonutChart data={byZone} />
+                      </ChartCard>
+                      <ChartCard title="Metro / Non-metro pie">
+                        <MetroPieChart data={byMetro} />
+                      </ChartCard>
+                      <ChartCard title="Zone pie (classic)">
+                        <ZonePieChart data={byZone} />
+                      </ChartCard>
+                    </div>
+                  ),
+                },
+                {
+                  key: "bar",
+                  label: "Bar Charts",
+                  children: (
+                    <div className="space-y-6">
+                      <div className="grid gap-6 lg:grid-cols-2">
+                        <ChartCard title="State bar (horizontal)">
+                          <StateBarChart data={byState} limit={12} />
+                        </ChartCard>
+                        <ChartCard title="District bar (top 12)">
+                          <DistrictBarChart data={byDistrict} limit={12} />
+                        </ChartCard>
+                      </div>
+                      <div className="grid gap-6 lg:grid-cols-2">
+                        <ChartCard title="Stacked — Gross, Net & Discounts by state">
+                          <StackedBarChart data={byState} limit={10} />
+                        </ChartCard>
+                        <ChartCard title="Discounts & Returns by state">
+                          <DiscountsReturnsBarChart data={byState} limit={10} />
+                        </ChartCard>
+                      </div>
+                      <ChartCard title="Tier bar">
+                        <TierBarChart data={byTier} />
+                      </ChartCard>
+                    </div>
+                  ),
+                },
+                {
+                  key: "line-area",
+                  label: "Line, Area & Combo",
+                  children: (
+                    <div className="grid gap-6 lg:grid-cols-2">
+                      <ChartCard title="State — Total vs Net sales (line)">
+                        <LineChartByState data={byState} limit={12} />
+                      </ChartCard>
+                      <ChartCard title="Zone — Area chart">
+                        <AreaChartByZone data={byZone} />
+                      </ChartCard>
+                      <ChartCard title="Combo — Sales (bar) & Orders (line) by state">
+                        <ComboChart data={byState} limit={10} />
+                      </ChartCard>
+                      <ChartCard title="Zone radar — Sales & Net">
+                        <RadarChartZones data={byZone} />
+                      </ChartCard>
+                    </div>
+                  ),
+                },
+                {
+                  key: "treemap",
+                  label: "Treemap",
+                  children: (
+                    <div className="space-y-6">
+                      <ChartCard title="State treemap (top 15 by sales)">
+                        <TreemapChart data={byState} limit={15} />
+                      </ChartCard>
+                    </div>
+                  ),
+                },
+                {
+                  key: "tables",
+                  label: "Summary Tables",
+                  children: (
+                    <div className="grid gap-6 lg:grid-cols-2">
+                      <ChartCard title="State summary table">
+                        <StateSummaryTable data={byState} height={400} />
+                      </ChartCard>
+                      <ChartCard title="Zone summary table">
+                        <ZoneSummaryTable data={byZone} height={280} />
+                      </ChartCard>
+                      <ChartCard title="Tier summary table">
+                        <TierSummaryTable data={byTier} height={240} />
+                      </ChartCard>
+                      <ChartCard title="District summary table">
+                        <DistrictSummaryTable data={byDistrict} height={400} />
+                      </ChartCard>
+                    </div>
+                  ),
+                },
+                {
+                  key: "raw",
+                  label: "Raw Data",
                   children: (
                     <div>
                       <p className="mb-2 text-sm text-slate-500 dark:text-slate-400">
                         Showing {filteredRows.length.toLocaleString()} rows (paginated). Same Excel
                         format works for 10K–1L+ rows.
                       </p>
-                      <DataTable rows={filteredRows} height={520} />
+                      <DataTable rows={filteredRows} height={580} />
                     </div>
                   ),
                 },

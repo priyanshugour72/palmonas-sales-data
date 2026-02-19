@@ -19,6 +19,8 @@ import {
   aggregateByState,
   aggregateByZone,
   aggregateByTier,
+  aggregateByDistrict,
+  aggregateByMetro,
   filterRows,
   getUniqueValues,
 } from "@/services/sales/analyticsService";
@@ -34,6 +36,8 @@ export interface SalesContextValue {
   byState: ReturnType<typeof aggregateByState>;
   byZone: ReturnType<typeof aggregateByZone>;
   byTier: ReturnType<typeof aggregateByTier>;
+  byDistrict: ReturnType<typeof aggregateByDistrict>;
+  byMetro: ReturnType<typeof aggregateByMetro>;
   uniqueStates: string[];
   uniqueZones: string[];
   uniqueTiers: string[];
@@ -91,6 +95,14 @@ export function SalesProvider({ children }: { children: React.ReactNode }) {
     () => aggregateByTier(rows, filter),
     [rows, filter]
   );
+  const byDistrict = useMemo(
+    () => aggregateByDistrict(rows, filter),
+    [rows, filter]
+  );
+  const byMetro = useMemo(
+    () => aggregateByMetro(rows, filter),
+    [rows, filter]
+  );
 
   const uniqueStates = useMemo(() => getUniqueValues(rows, "State"), [rows]);
   const uniqueZones = useMemo(() => getUniqueValues(rows, "Zone"), [rows]);
@@ -112,6 +124,8 @@ export function SalesProvider({ children }: { children: React.ReactNode }) {
       byState,
       byZone,
       byTier,
+      byDistrict,
+      byMetro,
       uniqueStates,
       uniqueZones,
       uniqueTiers,
@@ -128,6 +142,8 @@ export function SalesProvider({ children }: { children: React.ReactNode }) {
       byState,
       byZone,
       byTier,
+      byDistrict,
+      byMetro,
       uniqueStates,
       uniqueZones,
       uniqueTiers,

@@ -105,7 +105,7 @@ export function IndiaMap({ byState, onStateSelect }: IndiaMapProps) {
           center: [82, 22],
           scale: 600,
         }}
-        className="h-[380px] w-full"
+        className="h-[560px] w-full min-h-[480px]"
       >
         <ZoomableGroup
           center={position.coordinates}
