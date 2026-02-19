@@ -12,6 +12,17 @@ import { normalizeStateForMap } from "@/services/sales/analyticsService";
 
 const MAP_URL = "/india-states.json";
 
+/**
+ * Green shades by %: top (100%) = very dark green, lower % = lighter green.
+ * intensity 0 = lightest green, intensity 1 = darkest green.
+ */
+function percentToGreenShade(intensity: number): string {
+  const r = Math.round(220 - 215 * intensity);
+  const g = Math.round(252 - 206 * intensity);
+  const b = Math.round(231 - 209 * intensity);
+  return `rgb(${r}, ${g}, ${b})`;
+}
+
 function normalizeForMatch(name: string): string {
   return name
     .toLowerCase()
@@ -124,7 +135,7 @@ export function IndiaMap({ byState, onStateSelect }: IndiaMapProps) {
                 const intensity = maxSales > 0 ? totalSales / maxSales : 0;
                 const fill =
                   agg != null
-                    ? `rgba(99, 102, 241, ${0.3 + intensity * 0.7})`
+                    ? percentToGreenShade(intensity)
                     : "#334155";
                 const isSelected =
                   selectedState != null &&
@@ -140,7 +151,7 @@ export function IndiaMap({ byState, onStateSelect }: IndiaMapProps) {
                     strokeWidth={isSelected ? 1.5 : 0.5}
                     style={{
                       default: { outline: "none" },
-                      hover: { outline: "none", fill: "#818cf8" },
+                      hover: { outline: "none", fill: agg != null ? percentToGreenShade(Math.min(intensity + 0.12, 1)) : "#475569" },
                       pressed: { outline: "none" },
                     }}
                     onMouseEnter={() => setTooltip(name)}
@@ -174,8 +185,15 @@ export function IndiaMap({ byState, onStateSelect }: IndiaMapProps) {
           })()}
         </div>
       )}
-      <div className="mt-2 flex flex-wrap gap-2 text-xs text-slate-500 dark:text-slate-400">
-        <span>Hover state for details; click to select.</span>
+      <div className="mt-2 flex flex-wrap items-center gap-4 text-xs text-slate-500 dark:text-slate-400">
+        <span>Hover for details; click to select.</span>
+        <div className="flex items-center gap-1.5">
+          <span className="inline-block h-3 w-4 rounded shrink-0 bg-green-100" title="Low %" />
+          <span>Low %</span>
+          <span className="text-slate-400">→</span>
+          <span className="inline-block h-3 w-4 rounded shrink-0 bg-green-900" title="High %" />
+          <span>High %</span>
+        </div>
         {selectedState && (
           <span>
             Selected: <strong className="text-slate-700 dark:text-slate-300">{selectedState}</strong>
