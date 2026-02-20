@@ -2,6 +2,10 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
 import { SessionProvider } from "@/components/providers/SessionProvider";
+import { ThemeProvider } from "@/context/ThemeContext";
+import { AntdThemeProvider } from "@/components/providers/AntdThemeProvider";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { ThemeScript } from "@/components/ThemeScript";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -25,13 +29,22 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <ThemeScript />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <SessionProvider>
-        <AntdRegistry>{children}</AntdRegistry>
-      </SessionProvider>
+        <ThemeProvider>
+          <SessionProvider>
+            <AntdThemeProvider>
+              <AntdRegistry>
+                {children}
+              </AntdRegistry>
+            </AntdThemeProvider>
+          </SessionProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

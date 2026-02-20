@@ -2,9 +2,14 @@
 
 import { signIn } from "next-auth/react";
 import Image from "next/image";
+import { ThemeToggle } from "@/components/ThemeToggle";
+
 export default function SignInPage() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-slate-100 px-4 dark:bg-zinc-950">
+      <div className="absolute right-4 top-4">
+        <ThemeToggle />
+      </div>
       <div className="w-full max-w-sm rounded-2xl border border-slate-200 bg-white p-8 shadow-lg dark:border-slate-700 dark:bg-slate-900">
       <div className="flex justify-center mb-4">
         <Image src="/logo.png" alt="Logo" width={200} height={200} />

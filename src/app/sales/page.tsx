@@ -1,6 +1,7 @@
 "use client";
 
 import { signOut } from "next-auth/react";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import {
   UploadZone,
   FiltersBar,
@@ -67,7 +68,8 @@ function SalesDashboardContent() {
     <div className="min-h-screen bg-slate-100 dark:bg-zinc-950">
       <div className="mx-auto max-w-[1800px] space-y-6 p-4 sm:p-6">
         <header className="relative text-center">
-          <div className="absolute right-0 top-0 flex items-center gap-3">
+          <div className="absolute right-0 top-0 flex items-center gap-2">
+            <ThemeToggle />
             <button
               type="button"
               onClick={() => signOut({ callbackUrl: "/auth/signin" })}
